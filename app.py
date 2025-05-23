@@ -1,9 +1,12 @@
+
 import streamlit as st
 from fpdf import FPDF
 from datetime import datetime
 from streamlit_drawable_canvas import st_canvas
 import base64
 import os
+import tempfile
+from PIL import Image
 
 st.set_page_config(page_title="Honey Batch Entry Form", layout="wide")
 st.title("\U0001F36F Honey Batch Entry Form")
@@ -82,6 +85,11 @@ canvas_result = st_canvas(
 # --- Generate PDF ---
 st.header("Save Form as PDF")
 def generate_pdf():
+    filename = f"honey_batch_{batch_number.replace('/', '_')}.pdf"
+    temp_dir = tempfile.gettempdir()
+    pdf_path = os.path.join(temp_dir, filename)
+    sig_path = os.path.join(temp_dir, f"signature_{batch_number}.png")
+
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
@@ -106,20 +114,16 @@ def generate_pdf():
     for check in xray_checks:
         pdf.cell(200, 10, txt=f"Time: {check[0]} | Stainless Steel: {check[1]} | Glass: {check[2]} | Operator: {check[3]}", ln=True)
 
-    # Save signature as image
-    sig_path = f"/mnt/data/signature_{batch_number}.png"
     if canvas_result.image_data is not None:
-        from PIL import Image
         img = Image.fromarray(canvas_result.image_data.astype('uint8'), 'RGBA')
         img.save(sig_path)
         pdf.image(sig_path, x=10, y=250, w=60)
 
-    filename = f"honey_batch_{batch_number.replace('/', '_')}.pdf"
-    pdf_path = f"/mnt/data/{filename}"
     pdf.output(pdf_path)
     return pdf_path
 
 if st.button("Generate PDF"):
     file_path = generate_pdf()
     st.success(f"PDF generated successfully!")
-    st.download_button(label="Download PDF", file_name=os.path.basename(file_path), data=open(file_path, "rb").read())
+    with open(file_path, "rb") as f:
+        st.download_button(label="Download PDF", file_name=os.path.basename(file_path), data=f.read())
