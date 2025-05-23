@@ -1,4 +1,3 @@
-
 import streamlit as st
 from fpdf import FPDF
 from datetime import datetime
@@ -124,13 +123,16 @@ def generate_pdf():
 
 if st.button("Generate PDF"):
     file_path = generate_pdf()
-    st.success(f"PDF generated successfully!")
-    st.markdown(f'''✅ Your PDF has been successfully generated!
+    st.success("PDF generated successfully!")
+    st.markdown(f"""
+✅ **PDF File Generated**
 
-**Save location on server (temporary):**
-`{}`
+**Temporary Save Location:**
+```
+{file_path}
+```
 
-If you're running this app locally, the file is saved in your system's temporary directory.
-If you're on Streamlit Cloud, please use the **Download PDF** button below to save it to your device.'''.format(file_path))
+> Use the **Download PDF** button below to save it to your computer.
+""")
     with open(file_path, "rb") as f:
         st.download_button(label="Download PDF", file_name=os.path.basename(file_path), data=f.read())
