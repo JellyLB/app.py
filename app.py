@@ -7,7 +7,7 @@ import os
 import tempfile
 from PIL import Image
 
-class CleanHoneyBatchReport(FPDF):
+
     def header(self):
         self.set_fill_color(30, 60, 90)
         self.set_text_color(255, 255, 255)
@@ -109,7 +109,7 @@ def generate_pdf():
     temp_dir = tempfile.gettempdir()
     pdf_path = os.path.join(temp_dir, filename)
 
-    pdf = CleanHoneyBatchReport()
+    pdf = StyledHoneyBatchPDF()
     pdf.add_page()
     pdf.add_batch_info(batch_date.strftime('%d/%m/%Y'), batch_number, product_description)
     pdf.add_tipping_details(tipping_date.strftime('%d/%m/%Y'), start_time.strftime('%H:%M'), end_time.strftime('%H:%M'), thermaliser_flow, honey_temp, honey_loss, operator_initials, pig_visual_check)
