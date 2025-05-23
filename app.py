@@ -7,7 +7,7 @@ import os
 import tempfile
 from PIL import Image
 
-
+class StyledHoneyBatchPDF(FPDF):
     def header(self):
         self.set_fill_color(30, 60, 90)
         self.set_text_color(255, 255, 255)
@@ -129,15 +129,12 @@ def generate_pdf():
 if st.button("Generate PDF"):
     file_path = generate_pdf()
     st.success("PDF generated successfully!")
-    st.markdown(f"""
-✅ **PDF File Generated**
+    st.markdown(f"""✅ **PDF File Generated**
 
 **Temporary Save Location:**
 ```
 {file_path}
 ```
-
-> Use the **Download PDF** button below to save it to your computer.
-""")
+> Use the **Download PDF** button below to save it to your computer.""")
     with open(file_path, "rb") as f:
         st.download_button(label="Download PDF", file_name=os.path.basename(file_path), data=f.read())
